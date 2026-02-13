@@ -30,9 +30,13 @@ Cross-platform bindings of Swiss Ephemeris APIs for Flutter.
   # With ffiPlugin:true + use_frameworks!(:static), C symbols are compiled
   # into the Runner binary but stripped by: (1) linker dead-code elimination
   # and (2) post-link strip tool. These settings fix both.
+  # -all_load: forces linker to include ALL object files from all static archives
+  #   (used instead of -force_load which fails Xcode 15+ build-input validation
+  #    because the .framework path doesn't exist at validation time)
+  # STRIP_STYLE=non-global: preserves global symbol table entries for dlsym()
   # See: Flutter #62666, dart-lang/native #902, sweph.dart #18
   s.user_target_xcconfig = {
-    'OTHER_LDFLAGS' => '-force_load "${PODS_CONFIGURATION_BUILD_DIR}/sweph/sweph.framework/sweph"',
+    'OTHER_LDFLAGS' => '-all_load',
     'STRIP_STYLE' => 'non-global'
   }
 end
