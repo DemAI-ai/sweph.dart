@@ -52,11 +52,19 @@ class Sweph {
     AssetLoader? assetLoader,
     String? epheFilesPath,
   }) async {
+    // On iOS, ffiPlugin C code is statically linked into the Runner binary.
+    // DynamicLibrary.open('sweph.framework/sweph') fails because no .framework
+    // file exists at runtime with use_frameworks!(:static).
+    // Use DynamicLibrary.process() to find symbols in the main binary instead.
+    // See: Flutter #62666, sweph.dart #18
     _ffiHelper = await FfiHelper.load(
       modulePath ?? 'sweph',
       options: {
         if (modulePath == null) LoadOption.isFfiPlugin,
         LoadOption.isStandaloneWasm,
+      },
+      overrides: {
+        if (modulePath == null) AppType.ios: '',
       },
     );
     _assetsaver = await SwephAssetSaver.init(

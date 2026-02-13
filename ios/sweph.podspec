@@ -25,4 +25,14 @@ Cross-platform bindings of Swiss Ephemeris APIs for Flutter.
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
+
+  # Prevent iOS from stripping sweph C symbols used by Dart FFI.
+  # With ffiPlugin:true + use_frameworks!(:static), C symbols are compiled
+  # into the Runner binary but stripped by: (1) linker dead-code elimination
+  # and (2) post-link strip tool. These settings fix both.
+  # See: Flutter #62666, dart-lang/native #902, sweph.dart #18
+  s.user_target_xcconfig = {
+    'OTHER_LDFLAGS' => '-force_load "${PODS_CONFIGURATION_BUILD_DIR}/sweph/sweph.framework/sweph"',
+    'STRIP_STYLE' => 'non-global'
+  }
 end

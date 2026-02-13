@@ -74,6 +74,8 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#elif defined(__APPLE__)
+#define EMSCRIPTEN_KEEPALIVE __attribute__((used)) __attribute__((visibility("default")))
 #else
 #define EMSCRIPTEN_KEEPALIVE
 #endif
