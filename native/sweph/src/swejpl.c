@@ -77,6 +77,13 @@
   typedef __int64 off_t64;
   #define FSEEK _fseeki64
   #define FTELL _ftelli64
+#elif defined(__ANDROID__) && !defined(__LP64__) && __ANDROID_API__ < 24
+  /* 32-bit Android API < 24: fseeko/ftello unavailable (added in API 24).
+   * Fall back to fseek/ftell. Swiss Ephemeris files are < 100MB, well
+   * within the 32-bit 2GB file offset limit. */
+  typedef long off_t64;
+  #define FSEEK fseek
+  #define FTELL ftell
 #else
   typedef off_t off_t64;
   #define FSEEK fseeko
