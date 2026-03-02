@@ -30,3 +30,8 @@ IF (WIN32)
 ENDIF()
 
 target_compile_definitions(sweph PUBLIC DART_SHARED_LIB)
+
+# Support Android 16 KB memory page sizes (required by Google Play for Android 15+ devices)
+if(ANDROID)
+  target_link_options(sweph PRIVATE "-Wl,-z,max-page-size=16384")
+endif()
